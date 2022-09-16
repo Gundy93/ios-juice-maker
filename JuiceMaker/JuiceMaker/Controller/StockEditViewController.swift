@@ -11,16 +11,8 @@ class StockEditViewController: UIViewController {
     
     weak var delegate: FruitStoreDelegate?
     
-    @IBOutlet private weak var strawberryStockLabel: UILabel!
-    @IBOutlet private weak var bananaStockLabel: UILabel!
-    @IBOutlet private weak var kiwiStockLabel: UILabel!
-    @IBOutlet private weak var pineappleStockLabel: UILabel!
-    @IBOutlet private weak var mangoStockLabel: UILabel!
-    @IBOutlet private weak var strawberryStockStepper: UIStepper!
-    @IBOutlet private weak var bananaStockStepper: UIStepper!
-    @IBOutlet private weak var kiwiStockStepper: UIStepper!
-    @IBOutlet private weak var pineappleStockStepper: UIStepper!
-    @IBOutlet private weak var mangoStockStepper: UIStepper!
+    @IBOutlet private var fruitStockLabels: [UILabel]!
+    @IBOutlet private var fruitStockSteppers: [UIStepper]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,30 +24,20 @@ class StockEditViewController: UIViewController {
     }
     
     @IBAction private func touchUpStepper(_ sender: UIStepper) {
-        switch sender {
-        case strawberryStockStepper:
-            if let changedStock = changeStock(of: .strawberry, by: sender) {
-                strawberryStockLabel.text = "\(changedStock)"
-            }
-        case bananaStockStepper:
-            if let changedStock = changeStock(of: .banana, by: sender) {
-                bananaStockLabel.text = "\(changedStock)"
-            }
-        case kiwiStockStepper:
-            if let changedStock = changeStock(of: .kiwi, by: sender) {
-                kiwiStockLabel.text = "\(changedStock)"
-            }
-        case pineappleStockStepper:
-            if let changedStock = changeStock(of: .pineapple, by: sender) {
-                pineappleStockLabel.text = "\(changedStock)"
-            }
-        case mangoStockStepper:
-            if let changedStock = changeStock(of: .mango, by: sender) {
-                mangoStockLabel.text = "\(changedStock)"
-            }
-        default:
+        guard let fruit = fruit(of: sender) else {
             return
         }
+        if let changedStock = changeStock(of: fruit, by: sender) {
+            let label: UILabel = fruitStockLabels[fruit.rawValue]
+            label.text = "\(changedStock)"
+        }
+    }
+    
+    func fruit(of stepper: UIStepper) -> Fruit? {
+        if let fruitIndex: Int = fruitStockSteppers.firstIndex(of: stepper) {
+            return Fruit(rawValue: fruitIndex)
+        }
+        return nil
     }
     
     private func changeStock(of fruit: Fruit, by stockStepper: UIStepper) -> Int? {
@@ -77,9 +59,7 @@ class StockEditViewController: UIViewController {
     }
     
     private func updateFruitStockLabel(of fruit: Fruit, to fruitStock: Int?) {
-        guard let label = self.view.viewWithTag(fruit.rawValue) as? UILabel else {
-            return
-        }
+        let label = fruitStockLabels[fruit.rawValue]
         if let stock = fruitStock {
             label.text = "\(stock)"
         } else {
@@ -88,9 +68,7 @@ class StockEditViewController: UIViewController {
     }
     
     private func updateFruitStockStepper(of fruit: Fruit, to fruitStock: Int?) {
-        guard let stepper = self.view.viewWithTag(-fruit.rawValue) as? UIStepper  else {
-            return
-        }
+        let stepper = fruitStockSteppers[fruit.rawValue]
         if let stock = fruitStock {
             stepper.value = Double(stock)
         } else {
