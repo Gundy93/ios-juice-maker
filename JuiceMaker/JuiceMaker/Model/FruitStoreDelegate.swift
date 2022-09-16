@@ -6,5 +6,6 @@
 //
 
 protocol FruitStoreDelegate: AnyObject {
-    var fruitStore: FruitStore { get set }
+    func currentStock(of fruit: Fruit) throws -> Int
+    func changeStock(of fruit: Fruit, by amount: Int)
 }

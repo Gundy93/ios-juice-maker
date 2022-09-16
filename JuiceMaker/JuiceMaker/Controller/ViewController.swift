@@ -6,10 +6,9 @@
 
 import UIKit
 
-class ViewController: UIViewController, FruitStoreDelegate {
-    
-    var fruitStore: FruitStore = .init(inventory: [.strawberry: 10, .banana:10, .kiwi: 10, .mango: 10])
-    private lazy var juiceMaker: JuiceMaker = .init(fruitStore: fruitStore)
+class ViewController: UIViewController {
+    private var fruitStore = FruitStore(inventory: [.strawberry: 10, .banana:10, .kiwi: 10, .mango: 10])
+    private lazy var juiceMaker = JuiceMaker(fruitStore: fruitStore)
     
     @IBOutlet private var juiceOrderButtons: [UIButton]!
     @IBOutlet private var fruitStockLabels: [UILabel]!
@@ -29,7 +28,7 @@ class ViewController: UIViewController, FruitStoreDelegate {
     }
     
     @IBAction private func touchUpJuiceOrderButton(_ sender: UIButton) {
-        guard let juice: Juice = juice(orderedBy: sender) else {
+        guard let juice = juice(orderedBy: sender) else {
             return
         }
         let result: Result<Juice, FruitStoreError> = juiceMaker.make(juice)
@@ -50,7 +49,7 @@ class ViewController: UIViewController, FruitStoreDelegate {
     }
     
     private func juice(orderedBy button: UIButton) -> Juice? {
-        if let juiceIndex: Int = juiceOrderButtons.firstIndex(of: button) {
+        if let juiceIndex = juiceOrderButtons.firstIndex(of: button) {
             return Juice(rawValue: juiceIndex)
         }
         return nil
@@ -100,7 +99,7 @@ class ViewController: UIViewController, FruitStoreDelegate {
         guard let stockEditViewController = self.storyboard?.instantiateViewController(withIdentifier: "StockEditViewController") as? StockEditViewController else {
             return
         }
-        stockEditViewController.delegate = self
+        stockEditViewController.delegate = self.fruitStore
         let navigationController = UINavigationController(rootViewController: stockEditViewController)
         navigationController.modalTransitionStyle = .coverVertical
         navigationController.modalPresentationStyle = .fullScreen

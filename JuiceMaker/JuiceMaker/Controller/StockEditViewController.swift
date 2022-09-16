@@ -8,7 +8,6 @@
 import UIKit
 
 class StockEditViewController: UIViewController {
-    
     weak var delegate: FruitStoreDelegate?
     
     @IBOutlet private var fruitStockLabels: [UILabel]!
@@ -34,25 +33,25 @@ class StockEditViewController: UIViewController {
     }
     
     func fruit(of stepper: UIStepper) -> Fruit? {
-        if let fruitIndex: Int = fruitStockSteppers.firstIndex(of: stepper) {
+        if let fruitIndex = fruitStockSteppers.firstIndex(of: stepper) {
             return Fruit(rawValue: fruitIndex)
         }
         return nil
     }
     
     private func changeStock(of fruit: Fruit, by stockStepper: UIStepper) -> Int? {
-        guard let currentStock = try? delegate?.fruitStore.currentStock(of: fruit) else {
+        guard let currentStock = try? delegate?.currentStock(of: fruit) else {
             return nil
         }
         let stockStepperValue: Int = Int(stockStepper.value)
         let stockAmountToChange: Int = stockStepperValue - currentStock
-        delegate?.fruitStore.changeStock(of: fruit, by: stockAmountToChange)
+        delegate?.changeStock(of: fruit, by: stockAmountToChange)
         return currentStock + stockAmountToChange
     }
     
     private func updateFruitStock() {
         for fruit in Fruit.allCases {
-            let fruitStock: Int? = try? delegate?.fruitStore.currentStock(of: fruit)
+            let fruitStock: Int? = try? delegate?.currentStock(of: fruit)
             updateFruitStockLabel(of: fruit, to: fruitStock)
             updateFruitStockStepper(of: fruit, to: fruitStock)
         }

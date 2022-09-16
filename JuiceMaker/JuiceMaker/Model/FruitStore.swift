@@ -4,7 +4,7 @@
 //  Copyright © yagom academy. All rights reserved.
 //
 
-class FruitStore {
+class FruitStore: FruitStoreDelegate {
     private var inventory: Dictionary<Fruit, Int>
     
     init(inventory: Dictionary<Fruit, Int>) {
