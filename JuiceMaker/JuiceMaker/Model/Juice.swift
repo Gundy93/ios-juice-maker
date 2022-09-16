@@ -5,7 +5,7 @@
 //  Created by Gundy, 준호
 //
 
-enum Juice {
+enum Juice: Int {
     case strawberryJuice
     case bananaJuice
     case kiwiJuice

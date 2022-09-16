@@ -11,18 +11,8 @@ class ViewController: UIViewController, FruitStoreDelegate {
     var fruitStore: FruitStore = .init(inventory: [.strawberry: 10, .banana:10, .kiwi: 10, .mango: 10])
     private lazy var juiceMaker: JuiceMaker = .init(fruitStore: fruitStore)
     
-    @IBOutlet private weak var strawberryJuiceOrderButton: UIButton!
-    @IBOutlet private weak var bananaJuiceOrderButton: UIButton!
-    @IBOutlet private weak var kiwiJuiceOrderButton: UIButton!
-    @IBOutlet private weak var pineappleJuiceOrderButton: UIButton!
-    @IBOutlet private weak var strawberryBananaMixJuiceOrderButton: UIButton!
-    @IBOutlet private weak var mangoJuiceOrderButton: UIButton!
-    @IBOutlet private weak var mangoKiwiMixJuiceOrderButton: UIButton!
-    @IBOutlet private weak var strawberryStockLabel: UILabel!
-    @IBOutlet private weak var bananaStockLabel: UILabel!
-    @IBOutlet private weak var kiwiStockLabel: UILabel!
-    @IBOutlet private weak var pineappleStockLabel: UILabel!
-    @IBOutlet private weak var mangoStockLabel: UILabel!
+    @IBOutlet private var juiceOrderButtons: [UIButton]!
+    @IBOutlet private var fruitStockLabels: [UILabel]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,24 +50,10 @@ class ViewController: UIViewController, FruitStoreDelegate {
     }
     
     private func juice(orderedBy button: UIButton) -> Juice? {
-        switch button {
-        case strawberryJuiceOrderButton:
-            return .strawberryJuice
-        case bananaJuiceOrderButton:
-            return .bananaJuice
-        case kiwiJuiceOrderButton:
-            return .kiwiJuice
-        case pineappleJuiceOrderButton:
-            return .pineappleJuice
-        case strawberryBananaMixJuiceOrderButton:
-            return .strawberryBananaMixJuice
-        case mangoJuiceOrderButton:
-            return .mangoJuice
-        case mangoKiwiMixJuiceOrderButton:
-            return .mangoKiwiMixJuice
-        default:
-            return nil
+        if let juiceIndex: Int = juiceOrderButtons.firstIndex(of: button) {
+            return Juice(rawValue: juiceIndex)
         }
+        return nil
     }
     
     private func showOkayAlert(_ message: String) {
@@ -134,37 +110,18 @@ class ViewController: UIViewController, FruitStoreDelegate {
     }
     
     private func updateFruitStockLabel() {
-        if let strawberryStock = try? fruitStore.currentStock(of: .strawberry) {
-            strawberryStockLabel.text = "\(strawberryStock)"
-        } else {
-            strawberryStockLabel.text = FruitStoreError.notExist
-        }
-        if let bananaStock = try? fruitStore.currentStock(of: .banana) {
-            bananaStockLabel.text = "\(bananaStock)"
-        } else {
-            bananaStockLabel.text = FruitStoreError.notExist
-        }
-        if let kiwiStock = try? fruitStore.currentStock(of: .kiwi) {
-            kiwiStockLabel.text = "\(kiwiStock)"
-        } else {
-            kiwiStockLabel.text = FruitStoreError.notExist
-        }
-        if let pineappleStock = try? fruitStore.currentStock(of: .pineapple) {
-            pineappleStockLabel.text = "\(pineappleStock)"
-        } else {
-            pineappleStockLabel.text = FruitStoreError.notExist
-        }
-        if let mangoStock = try? fruitStore.currentStock(of: .mango) {
-            mangoStockLabel.text = "\(mangoStock)"
-        } else {
-            mangoStockLabel.text = FruitStoreError.notExist
+        for (fruitStockLabel, fruit) in zip(fruitStockLabels, Fruit.allCases) {
+            if let fruitStock = try? fruitStore.currentStock(of: fruit) {
+                fruitStockLabel.text = "\(fruitStock)"
+            } else {
+                fruitStockLabel.text = FruitStoreError.notExist
+            }
         }
     }
     
     private func adjustsFontSizeOfButtonsToFitWidth() {
-        let buttons: [UIButton] = [strawberryJuiceOrderButton, bananaJuiceOrderButton, kiwiJuiceOrderButton, pineappleJuiceOrderButton, strawberryBananaMixJuiceOrderButton, mangoJuiceOrderButton, mangoKiwiMixJuiceOrderButton]
-        for button in buttons {
-            button.titleLabel?.textAlignment = .center
+        for button in juiceOrderButtons {
+            button.titleLabel?.adjustsFontSizeToFitWidth = true
         }
     }
 }
